@@ -8,3 +8,7 @@ EXCLUDED_DIRS = [
     "/System", "/Library", "/usr", "/bin", "/sbin", "/opt", "/Applications", # macOS/Linux
     "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)"  # Windows
 ]
+
+EXCLUDED_SUB_DIRS = [
+    "/.npm", "/.gradle", "/.npm", "/.vscode"
+]
