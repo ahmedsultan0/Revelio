@@ -25,14 +25,14 @@ def index_images(start_paths, max_paths=300):
                 paths += 1
                 yield path
 
-def size_category(size_kb):
+def size_category(size_mb):
     """Classify size in KB into Small / Medium / Large"""
-    if size_kb < 500:
-        return "Small"
-    elif size_kb < 2000:
-        return "Medium"
+    if size_mb < 0.5:
+        return "S"
+    elif size_mb < 2:
+        return "M"
     else:
-        return "Large"
+        return "L"
 
 def process_images(start_path, max_workers=4):
     """
@@ -50,10 +50,10 @@ def process_images(start_path, max_workers=4):
 
     def get_image_info(path):
         try:
-            size_kb = round(path.stat().st_size / 1024, 2)
+            size_kb = round(path.stat().st_size, 2)
             return {
                 "path": str(path),
-                "size_kb": size_kb
+                "size_mb": size_kb
             }
         except Exception:
             return None
