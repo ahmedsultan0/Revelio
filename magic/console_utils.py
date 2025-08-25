@@ -30,7 +30,6 @@ def welcome():
         [{LB}][ + ]  C O D E D   B Y  A H M E D  [ + ][/]    
     """
 
-    # Replace ░ first, then █
     art_banner = (
         art_banner.replace("█", f"[{LB}]█[/]")
                   .replace("░", f"[{BL}]░[/]")

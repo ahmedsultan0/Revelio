@@ -26,7 +26,6 @@ def call_option(opt):
     for option in options:
         if option['num'] == opt:
             if 'func' in option:
-                # Import here to avoid circular import
                 if option['func'] == 'index':
                     from magic.index import index
                     index()
@@ -37,7 +36,7 @@ def call_option(opt):
                 console.print('\n[/][ {BL}! [/]] {LB}No function detected')
 
 def execute_option(opt):
-    from revilio import main  # Import here to avoid circular import
+    from revilio import main 
     try:
         call_option(opt)
         console.input(f"\n[{BL}][ + ] [{LB}]Press enter to continue: [/]")
