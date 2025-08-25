@@ -1,15 +1,22 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from magic.config import EXCLUDED_DIRS, IMAGE_EXTENSIONS
+from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS
 from pathlib import Path
 from magic.console_utils import console
 
 
 def is_excluded(path: Path):
-    """Check if a path is in excluded directories."""
+    """Check if a path is in excluded directories or is inside a famous hidden directory."""
     abs_path = path.resolve()
-    return any(str(abs_path).startswith(str(Path(ex).resolve())) for ex in EXCLUDED_DIRS)
 
-def index_images(start_paths, max_paths=300):
+    if any(str(abs_path).startswith(str(Path(ex).resolve())) for ex in EXCLUDED_DIRS):
+        return True
+
+    if any(str(Path(ex).resolve()) in str(abs_path) for ex in EXCLUDED_SUB_DIRS):
+        return True
+    
+    return False
+
+def index_images(start_paths, max_paths=30000):
     """Yield image paths recursively from start_paths, excluding system folders."""
     if isinstance(start_paths, str):
         start_paths = [start_paths]
