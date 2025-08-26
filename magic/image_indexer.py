@@ -79,5 +79,4 @@ def process_images(start_path, max_workers=4):
                 images_by['type'][data['type']].append(data)
                 images_by['name'].append(data["name"])
                 successful_count += 1  
-                console.print(f"successfully processed: {successful_count}", end='\r')
     return images_by

@@ -36,7 +36,7 @@ def call_option(opt, options=options):
                 console.print('\n[/][ {BL}! [/]] {LB}No function detected')
 
 def execute_option(opt, options=options):
-    from revilio import main 
+    from revelio import main 
     try:
         call_option(opt, options=options)
         # console.input(f"\n[{BL}][ + ] [{LB}]Press enter to continue: [/]")
