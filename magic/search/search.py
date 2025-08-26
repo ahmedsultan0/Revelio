@@ -1,7 +1,7 @@
 from magic.config import BL, LB
 from magic.console_utils import console
 from magic.menu import option_text
-from revilio import global_index
+from revelio import global_index
 from .options import search_options
 
 

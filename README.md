@@ -21,7 +21,7 @@ pip install -r requirements.txt
 ```
 4) Enjoy the magic 🪄
 ```python
-python revilio.py
+python revelio.py
 ```
 ## Usage
 
