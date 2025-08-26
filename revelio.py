@@ -4,8 +4,14 @@ from magic.console_utils import clear, welcome
 from magic.menu import execute_option, option_text
 from magic.console_utils import console
 from magic.constants import general_text_format
+from magic.inventory import db_connection
 
-global_index = {}
+global_index = {
+    "name": [],
+    "path": [],
+    "size": {"S": [], "M": [], "L": []},
+    "type": {},
+}
 
 def main(clear_screen=True):
     if clear_screen:
@@ -14,6 +20,10 @@ def main(clear_screen=True):
     else:
         sleep(1.5)
     console.print(option_text())
+
+    if(len(global_index) == 0):
+        db_connection.load_all_from_table()
+
     try:
         opt = int(console.input(general_text_format("Select Option : ")))
         execute_option(opt)
@@ -24,6 +34,7 @@ def main(clear_screen=True):
 
 if __name__ == '__main__':
     try:
+        db_connection.load_all_from_table()
         main()
     except KeyboardInterrupt:
         console.print(general_text_format("Mischief Managed! 🪄", "info"))

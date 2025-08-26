@@ -20,14 +20,11 @@ def index():
     spinner_thread = threading.Thread(target=loading_spinner, args=(stop_event,))
     spinner_thread.start()
 
-    images_data = process_images(folder_to_index)
-
-    # Update global index
-    revelio.global_index.clear()
-    revelio.global_index.update(images_data)
+    number_of_images_processed, number_of_images_already_processed = process_images(folder_to_index)
 
     stop_event.set()
     spinner_thread.join()
-
-    console.print(general_text_format(f"Indexing {len(images_data['name'])} images is complete!", "success"))
+    if number_of_images_already_processed > 0:
+        console.print(general_text_format(f"Re-indexing {number_of_images_already_processed} old images is complete!", "success"))
+    console.print(general_text_format(f"Indexing {number_of_images_processed} new images is complete!", "success"))
     
