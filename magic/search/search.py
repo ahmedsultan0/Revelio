@@ -1,3 +1,4 @@
+import re
 from magic.config import BL, LB
 from magic.console_utils import console
 from magic.menu import option_text
@@ -5,27 +6,31 @@ from magic.constants import general_text_format
 from revelio import global_index
 from .options import search_options
 
-
 def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
     """Generic search handler for global_index lookups."""
-    opt = console.input(general_text_format(prompt)).strip()
-    opt = transform(opt)
+    try:
+        opt = console.input(general_text_format(prompt)).strip()
+        opt = transform(opt)
 
-    if not opt:
-        console.print(general_text_format(error_msg))
-        return
+        if not opt:
+            console.print(general_text_format(error_msg))
+            return
+        
+        pattern = re.compile(opt.replace("*", ".*").replace("?", ".")) if key == "regex" else None
 
-    data = global_index.get(key, {} if key != "name" else [])
-    images = data.get(opt, []) if key != "name" else [
-        name for name in data if filter_fn and filter_fn(opt, name)
-    ]
+        data = global_index.get(key if key != "regex" else "name", {} if key not in ["name", "regex"] else [])
 
-    if images:
-        for img in images:
-            print(img)
-    else:
-        console.print(general_text_format("No images found for {key}: {opt}", "info"))
-
+        images = data.get(opt, []) if key not in ["name", "regex"] else [
+            name for name in data if filter_fn and filter_fn(opt, name, pattern)
+        ]
+        
+        if images:
+            for img in images:
+                print(img)
+        else:
+            console.print(general_text_format(f"No images found for {key}: {opt}", "info"))
+    except Exception as e:
+        console.print(general_text_format(f"Error while searching images.", "error"))
 
 def search_size():
     search_input(
@@ -51,22 +56,33 @@ def search_name():
         error_msg="Invalid option. Please enter a name.",
         key="name",
         transform=lambda x: x.lower(),
-        filter_fn=lambda opt, name: opt in name.lower()
+        filter_fn=lambda opt, name, pattern: opt in name.lower()
+    )
+
+
+def search_regex():
+    search_input(
+        prompt="Enter a regex: ",
+        error_msg="Invalid option. Please enter a correct regex.",
+        key="regex",
+        transform=lambda x: x.lower(),
+        filter_fn=lambda opt, name, pattern: pattern.search(name)
     )
 
 
 def search():
     console.print(option_text(search_options))
-    opt = console.input(general_text_format("Select a search operation (S/N/T): ", "info")).strip().upper()
+    opt = console.input(general_text_format("Select a search operation (S/N/T/R): ", "info")).strip().upper()
 
     func_map = {
         'S': search_size,
         'N': search_name,
-        'T': search_type
+        'T': search_type,
+        'R': search_regex
     }
 
     func = func_map.get(opt)
     if func:
         func()
     else:
-        console.print(general_text_format("Invalid option. Please enter S, N, or T.", "info"))
+        console.print(general_text_format("Invalid option. Please enter S, N, T or R.", "info"))
