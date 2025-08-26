@@ -1,5 +1,6 @@
 from magic.config import BL, LB
 from magic.console_utils import console
+from magic.constants import general_text_format
 
 options = [
     {
@@ -21,7 +22,7 @@ options = [
 
 def call_option(opt, options=options):
     if not is_in_options(opt):
-        console.print(f"\n[ [{BL}]! [/]] [{LB}]Option not found")
+        console.print(general_text_format("Option not found", "info"))
         return
     for option in options:
         if option['num'] == opt:
@@ -33,19 +34,18 @@ def call_option(opt, options=options):
                     from magic.search.search import search
                     search()
             else:
-                console.print('\n[/][ {BL}! [/]] {LB}No function detected')
+                console.print(general_text_format("No function detected", "info"))
 
 def execute_option(opt, options=options):
     from revelio import main 
     try:
         call_option(opt, options=options)
-        # console.input(f"\n[{BL}][ + ] [{LB}]Press enter to continue: [/]")
         main(False)
     except ValueError as e:
-        print(e)
+        console.print(general_text_format(e, "error"))
         execute_option(opt, options=options)
     except KeyboardInterrupt:
-        console.print(f"\n[{BL}][ ! ] [{LB}]Mischief Managed! 🪄")
+        console.print(general_text_format("Mischief Managed! 🪄", "info"))
         exit()
 
 def option_text(options=options):
