@@ -1,6 +1,6 @@
 # Revelio
 
-Find your image files with one step, without the headache of Finder or File Explorer
+Reveal your lost image files with one step without the headache of Finder, Spotlight, or Explorer
 
 <img width="753" height="451" alt="Revilio" src="https://github.com/user-attachments/assets/34e98d18-9f07-49bb-b9b3-8d862f673cef" />
 

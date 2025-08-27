@@ -1,31 +1,29 @@
-import itertools, threading, sys, time
 from magic.config import BL, LB
 from magic.image_indexer import process_images
+from magic.console_utils import console, general_text_format
+import itertools, threading, time
 import revelio
-from magic.console_utils import console
 
 def loading_spinner(stop_event):
     spinner = itertools.cycle(["|", "/", "-", "\\"])
     while not stop_event.is_set():
-        console.print(f"[{BL}][ + ] [{LB}]Indexing images... [white]{next(spinner)}", end="\r")
+        console.print(general_text_format(f"Indexing images... [white]{next(spinner)}", "loading"), end="\r")
+
         time.sleep(0.1)
 
 
 def index():
-    folder_to_index = console.input("Enter folder to index images: ").strip()
+    folder_to_index = console.input(general_text_format("Enter folder to index images: ")).strip()
     
     stop_event = threading.Event()
     spinner_thread = threading.Thread(target=loading_spinner, args=(stop_event,))
     spinner_thread.start()
 
-    images_data = process_images(folder_to_index)
-
-    # Update global index
-    revelio.global_index.clear()
-    revelio.global_index.update(images_data)
+    number_of_images_processed, number_of_images_already_processed = process_images(folder_to_index)
 
     stop_event.set()
     spinner_thread.join()
-
-    console.print(f"\n[{BL}][ + ] [green]Indexing {len(images_data['name'])} images is complete![/green]")
+    if number_of_images_already_processed > 0:
+        console.print(general_text_format(f"Re-indexing {number_of_images_already_processed} old images is complete!", "success"))
+    console.print(general_text_format(f"Indexing {number_of_images_processed} new images is complete!", "success"))
     

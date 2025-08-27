@@ -13,5 +13,10 @@ search_options = [
         'num': "T",
         'text': 'Search by Type',
         'func': 'search_type'
+    },    
+    {
+        'num': "R",
+        'text': 'Search by Regex',
+        'func': 'search_regex'
     },
 ]
