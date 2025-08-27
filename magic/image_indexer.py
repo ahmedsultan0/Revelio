@@ -68,6 +68,7 @@ def process_images(start_path, max_workers=4):
                 "path": str(path),
                 "name": path.name,
                 "size_mb": size_mb,
+                "size_category": size_category(size_mb),
                 "file_type": path.suffix.lower().lstrip('.')
             }
         except Exception:
@@ -78,16 +79,15 @@ def process_images(start_path, max_workers=4):
         for future in as_completed(future_to_path):
             data = future.result()
             if data and data["path"] not in images_by['path']:
-                cat = size_category(data['size_mb'])
-                images_by['size'][cat].append(data)
-                images_by['type'].get(data['file_type'], []).append(data)
+                images_by['size'][data["size_category"]].append(data)
+                images_by['type'].setdefault(data['file_type'], []).append(data)
                 images_by['name'].append(data["name"])
                 successful_count += 1  
             else:
                 already_indexed_count += 1
     
     try:
-        sync_dictionary_with_db(images_by['size']['S'] + images_by['size']['M'] + images_by['size']['L'], ['path', 'name',  'size_mb', 'file_type'], 'files')
+        sync_dictionary_with_db(images_by['size']['S'] + images_by['size']['M'] + images_by['size']['L'], ['path', 'name',  'size_mb', 'size_category', 'file_type'], 'files')
         revelio.global_index.update(images_by)
     except Exception as e:
         console.print(general_text_format(f"Error syncing with DB", "error"))

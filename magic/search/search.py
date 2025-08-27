@@ -2,7 +2,6 @@ import re
 from magic.config import BL, LB
 from magic.console_utils import console, general_text_format
 from magic.menu import option_text
-from magic.constants import general_text_format
 from revelio import global_index
 from .options import search_options
 
@@ -16,12 +15,15 @@ def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
         if not opt:
             console.print(general_text_format(error_msg))
             return
-            
-        pattern = re.compile(opt.replace("*", ".*").replace("?", "."), re.IGNORECASE) if key == "regex" else None
+        
+        pattern = None
+        
+        if key == "regex":
+            pattern = re.compile(opt.replace("*", ".*").replace("?", "."), re.IGNORECASE)
 
-        data = global_index.get(key, {} if key != "name" else [])
-        images = data.get(opt, []) if key != "name" else [
-            name for name in data if filter_fn and filter_fn(opt, name)
+        data = global_index.get(key if key != "regex" else "name", {} if key not in ["name", "regex"] else [])
+        images = data.get(opt, []) if key not in ["name", "regex"] else [
+            name for name in data if filter_fn(opt, name, pattern)
         ]
 
         if images:

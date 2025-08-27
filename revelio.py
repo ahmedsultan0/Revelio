@@ -5,7 +5,12 @@ from magic.menu import execute_option, option_text
 from magic.console_utils import console, general_text_format
 from magic.inventory import db_connection
 
-global_index = {}
+global_index = {
+    "size": {"S": [], "M": [], "L": []},
+    "type": {},
+    "name": [],
+    "path": []
+}
 
 def main(clear_screen=True):
     if clear_screen:

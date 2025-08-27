@@ -16,6 +16,7 @@ if not db_exists:
             name TEXT NOT NULL,
             path TEXT NOT NULL UNIQUE,
             size_mb NUMBERIC,
+            size_category TEXT,
             file_type TEXT,
             recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -49,12 +50,21 @@ def load_all_from_table():
     """
     Loads categorized records from a the files database table.
     """
-    cursor.execute(f"SELECT name, path FROM files")
-    query_result = cursor.fetchall()
+    cursor.execute(f"SELECT name, path, size_category, file_type, size_mb FROM files")
+    query_result = cursor.fetchall() 
 
-    all_file_names = [row[0] for row in query_result]
-    all_file_paths = [row[1] for row in query_result]
+    for row in query_result:
 
-    global_index["name"] = all_file_names
-    global_index["path"] = all_file_paths
+        formatted_row = {
+            "name": row[0],
+            "path": row[1],
+            "size_category": row[2],
+            "file_type": row[3],
+            "size_mb": row[4]
+        }
+
+        global_index["size"][row[2]].append(formatted_row)
+        global_index["type"].setdefault(row[3], []).append(formatted_row)    
+        global_index["name"].append(row[0])
+        global_index["path"].append(row[1])
     
