@@ -1,7 +1,9 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS
 from pathlib import Path
-from magic.console_utils import console
+from magic.console_utils import console, general_text_format
+from magic.inventory.db_connection import sync_dictionary_with_db
+import revelio
 
 
 def is_excluded(path: Path):
@@ -16,7 +18,7 @@ def is_excluded(path: Path):
     
     return False
 
-def index_images(start_paths, max_paths=30000):
+def index_images(start_paths, max_paths=1000000):
     """Yield image paths recursively from start_paths, excluding system folders."""
     if isinstance(start_paths, str):
         start_paths = [start_paths]
@@ -49,13 +51,15 @@ def process_images(start_path, max_workers=4):
     from collections import defaultdict
 
     images_by = {
-        "size": defaultdict(list),
-        "type": defaultdict(list),
-        "name": []
+        "size": revelio.global_index["size"],
+        "type": revelio.global_index["type"],
+        "name": revelio.global_index["name"],
+        "path": revelio.global_index["path"],
     }
 
     indexed_images = list(index_images(start_path))
     successful_count = 0
+    already_indexed_count = 0
 
     def get_image_info(path):
         try:
@@ -64,7 +68,7 @@ def process_images(start_path, max_workers=4):
                 "path": str(path),
                 "name": path.name,
                 "size_mb": size_mb,
-                "type": path.suffix.lower().lstrip('.')
+                "file_type": path.suffix.lower().lstrip('.')
             }
         except Exception:
             return None
@@ -73,10 +77,20 @@ def process_images(start_path, max_workers=4):
         future_to_path = {executor.submit(get_image_info, path): path for path in indexed_images}
         for future in as_completed(future_to_path):
             data = future.result()
-            if data:
+            if data and data["path"] not in images_by['path']:
                 cat = size_category(data['size_mb'])
                 images_by['size'][cat].append(data)
-                images_by['type'][data['type']].append(data)
+                images_by['type'].get(data['file_type'], []).append(data)
                 images_by['name'].append(data["name"])
                 successful_count += 1  
-    return images_by
+            else:
+                already_indexed_count += 1
+    
+    try:
+        sync_dictionary_with_db(images_by['size']['S'] + images_by['size']['M'] + images_by['size']['L'], ['path', 'name',  'size_mb', 'file_type'], 'files')
+        revelio.global_index.update(images_by)
+    except Exception as e:
+        console.print(general_text_format(f"Error syncing with DB", "error"))
+
+    return successful_count, already_indexed_count
+
