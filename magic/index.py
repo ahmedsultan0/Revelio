@@ -1,7 +1,6 @@
 from magic.config import BL, LB
 from magic.image_indexer import process_images
-from magic.console_utils import console
-from magic.constants import general_text_format
+from magic.console_utils import console, general_text_format
 import itertools, threading, time
 import revelio
 

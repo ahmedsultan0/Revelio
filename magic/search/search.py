@@ -1,6 +1,6 @@
 import re
 from magic.config import BL, LB
-from magic.console_utils import console
+from magic.console_utils import console, general_text_format
 from magic.menu import option_text
 from magic.constants import general_text_format
 from revelio import global_index
@@ -12,18 +12,18 @@ def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
         opt = console.input(general_text_format(prompt)).strip()
         opt = transform(opt)
 
+
         if not opt:
             console.print(general_text_format(error_msg))
             return
-        
-        pattern = re.compile(opt.replace("*", ".*").replace("?", ".")) if key == "regex" else None
+            
+        pattern = re.compile(opt.replace("*", ".*").replace("?", "."), re.IGNORECASE) if key == "regex" else None
 
-        data = global_index.get(key if key != "regex" else "name", {} if key not in ["name", "regex"] else [])
-
-        images = data.get(opt, []) if key not in ["name", "regex"] else [
-            name for name in data if filter_fn and filter_fn(opt, name, pattern)
+        data = global_index.get(key, {} if key != "name" else [])
+        images = data.get(opt, []) if key != "name" else [
+            name for name in data if filter_fn and filter_fn(opt, name)
         ]
-        
+
         if images:
             for img in images:
                 print(img)
@@ -31,6 +31,7 @@ def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
             console.print(general_text_format(f"No images found for {key}: {opt}", "info"))
     except Exception as e:
         console.print(general_text_format(f"Error while searching images.", "error"))
+
 
 def search_size():
     search_input(

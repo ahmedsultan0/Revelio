@@ -2,16 +2,10 @@ from time import sleep
 from magic.config import BL, LB
 from magic.console_utils import clear, welcome
 from magic.menu import execute_option, option_text
-from magic.console_utils import console
-from magic.constants import general_text_format
+from magic.console_utils import console, general_text_format
 from magic.inventory import db_connection
 
-global_index = {
-    "name": [],
-    "path": [],
-    "size": {"S": [], "M": [], "L": []},
-    "type": {},
-}
+global_index = {}
 
 def main(clear_screen=True):
     if clear_screen:

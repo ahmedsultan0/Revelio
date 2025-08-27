@@ -1,10 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS
 from pathlib import Path
-from magic.console_utils import console
+from magic.console_utils import console, general_text_format
 from magic.inventory.db_connection import sync_dictionary_with_db
-from magic.constants import general_text_format
 import revelio
+
 
 def is_excluded(path: Path):
     """Check if a path is in excluded directories or is inside a famous hidden directory."""
@@ -82,15 +82,15 @@ def process_images(start_path, max_workers=4):
                 images_by['size'][cat].append(data)
                 images_by['type'].get(data['file_type'], []).append(data)
                 images_by['name'].append(data["name"])
-                successful_count += 1 
+                successful_count += 1  
             else:
                 already_indexed_count += 1
     
-    # try:
-    sync_dictionary_with_db(images_by['size']['S'] + images_by['size']['M'] + images_by['size']['L'], ['path', 'name',  'size_mb', 'file_type'], 'files')
-    revelio.global_index.update(images_by)
-    # except Exception as e:
-    #     console.print(general_text_format(f"Error syncing with DB sync", "error"))
-    #     print(e) #remove later
+    try:
+        sync_dictionary_with_db(images_by['size']['S'] + images_by['size']['M'] + images_by['size']['L'], ['path', 'name',  'size_mb', 'file_type'], 'files')
+        revelio.global_index.update(images_by)
+    except Exception as e:
+        console.print(general_text_format(f"Error syncing with DB", "error"))
 
     return successful_count, already_indexed_count
+
