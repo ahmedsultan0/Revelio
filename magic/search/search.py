@@ -74,6 +74,11 @@ def search_regex():
 
 
 def search():
+
+    if(len(global_index["name"]) == 0):
+        console.print(general_text_format("No images scanned yet. Please scan first with option 1.", "info"))
+        return
+
     console.print(option_text(search_options))
     opt = console.input(general_text_format("Select a search operation (S/N/T/R): ", "info")).strip().upper()
 
