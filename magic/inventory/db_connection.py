@@ -66,5 +66,5 @@ def load_all_from_table():
         global_index["size"][row[2]].append(formatted_row)
         global_index["type"].setdefault(row[3], []).append(formatted_row)    
         global_index["name"].append(row[0])
-        global_index["path"].append(row[1])
+        global_index["path"].append(formatted_row)
     
