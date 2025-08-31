@@ -82,6 +82,7 @@ def process_images(start_path, max_workers=4):
                 images_by['size'][data["size_category"]].append(data)
                 images_by['type'].setdefault(data['file_type'], []).append(data)
                 images_by['name'].append(data["name"])
+                images_by['path'].append(data)
                 successful_count += 1  
             else:
                 already_indexed_count += 1
