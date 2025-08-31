@@ -13,7 +13,7 @@ def loading_spinner(stop_event):
 
 
 def index():
-    folder_to_index = console.input(general_text_format("Enter folder to index images: ")).strip()
+    folder_to_index = console.input(general_text_format("Enter a folder to scan the images: ")).strip()
     
     stop_event = threading.Event()
     spinner_thread = threading.Thread(target=loading_spinner, args=(stop_event,))

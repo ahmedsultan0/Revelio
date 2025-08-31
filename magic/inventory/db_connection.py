@@ -1,6 +1,7 @@
 import sqlite3
 import os 
 from revelio import global_index
+from magic.console_utils import console, general_text_format
 
 DB_FILE = "revelio.db"
 
@@ -50,21 +51,24 @@ def load_all_from_table():
     """
     Loads categorized records from a the files database table.
     """
-    cursor.execute(f"SELECT name, path, size_category, file_type, size_mb FROM files")
-    query_result = cursor.fetchall() 
+    try:
+        cursor.execute(f"SELECT path, name, size_mb, size_category, file_type FROM files")
+        query_result = cursor.fetchall() 
 
-    for row in query_result:
+        for row in query_result:
 
-        formatted_row = {
-            "name": row[0],
-            "path": row[1],
-            "size_category": row[2],
-            "file_type": row[3],
-            "size_mb": row[4]
-        }
+            formatted_row = {
+                "path": row[0],
+                "name": row[1],
+                "size_mb": row[2],
+                "size_category": row[3],
+                "file_type": row[4]
+            }
 
-        global_index["size"][row[2]].append(formatted_row)
-        global_index["type"].setdefault(row[3], []).append(formatted_row)    
-        global_index["name"].append(row[0])
-        global_index["path"].append(row[1])
-    
+            global_index["size"][row[3]].append(row[1])
+            global_index["type"].setdefault(row[3], []).append(row[1])    
+            global_index["name"].append(row[1])
+            global_index["path"].append(formatted_row)
+            
+    except Exception as e:
+        console.print(general_text_format(f"Error loading files archive from DB", "error"))
