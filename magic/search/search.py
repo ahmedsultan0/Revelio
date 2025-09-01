@@ -1,7 +1,6 @@
 import re
-from magic.config import BL, LB
-from magic.console_utils import console, general_text_format
-from magic.menu import option_text
+from magic.utils.console_utils import console, general_text_format, file_info_format
+from magic.workflow.menu import option_text
 from revelio import global_index
 from .options import search_options
 
@@ -22,23 +21,24 @@ def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
             pattern = re.compile(opt.replace("*", ".*").replace("?", "."), re.IGNORECASE)
 
         data = global_index.get(key if key != "regex" else "name", {} if key not in ["name", "regex"] else [])
-        images = data.get(opt, []) if key not in ["name", "regex"] else [
-            name for name in data if filter_fn(opt, name, pattern)
+        images_hashes = data.get(opt, []) if key not in ["name", "regex"] else [
+            global_index["name_to_id"][name] for name in data if filter_fn(opt, name, pattern)
         ]
 
-        if images:
-            for img in images:
-                print(img)
-        else:
+        if not images_hashes:
             console.print(general_text_format(f"No images found for {key}: {opt}", "info"))
+
+        for img_hash in images_hashes:
+            console.print(file_info_format(global_index["records"][img_hash]))
+
     except Exception as e:
         console.print(general_text_format(f"Error while searching images.", "error"))
 
 
 def search_size():
     search_input(
-        prompt="Select a size (S/M/L):",
-        error_msg="Invalid option. Please enter S, M, or L.",
+        prompt="Select a size (S/M/L/XL):",
+        error_msg="Invalid option. Please enter S, M, L or XL.",
         key="size",
         transform=lambda x: x.upper()
     )

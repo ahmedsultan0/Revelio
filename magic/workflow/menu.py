@@ -1,5 +1,4 @@
-from magic.config import BL, LB
-from magic.console_utils import console, general_text_format
+from magic.utils.console_utils import console, general_text_format
 
 options = [
     {
@@ -27,7 +26,7 @@ def call_option(opt, options=options):
         if option['num'] == opt:
             if 'func' in option:
                 if option['func'] == 'index':
-                    from magic.index import index
+                    from magic.scan.index import index
                     index()
                 elif option['func'] == 'search':
                     from magic.search.search import search

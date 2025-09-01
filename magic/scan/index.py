@@ -1,8 +1,6 @@
-from magic.config import BL, LB
-from magic.image_indexer import process_images
-from magic.console_utils import console, general_text_format
+from magic.utils.image_indexer import process_images
+from magic.utils.console_utils import console, general_text_format
 import itertools, threading, time
-import revelio
 
 def loading_spinner(stop_event):
     spinner = itertools.cycle(["|", "/", "-", "\\"])

@@ -13,3 +13,5 @@ EXCLUDED_DIRS = [
 EXCLUDED_SUB_DIRS = [
     "/.npm", "/.gradle", "/.npm", "/.vscode", "/.rbenv", "/node_modules"
 ]
+
+SIZE_CATEGORIES_SPLIT = {"S": 0.5, "M": 2, "L": 10, "XL": float('inf')}  
