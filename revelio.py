@@ -9,10 +9,11 @@ import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 global_index = {
+    "records": {},
     "size": {"S": [], "M": [], "L": []},
     "type": {},
     "name": [],
-    "path": []
+    "name_to_id": {},
 }
 
 def main(clear_screen=True):

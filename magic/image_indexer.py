@@ -4,6 +4,7 @@ from pathlib import Path
 from magic.console_utils import console, general_text_format
 from magic.inventory.db_connection import sync_dictionary_with_db
 import revelio
+import hashlib
 
 
 def is_excluded(path: Path):
@@ -48,13 +49,12 @@ def process_images(start_path, max_workers=4):
     Index and classify images in parallel by size only.
     Returns a dictionary with key 'size' mapping category -> list of image info.
     """
-    from collections import defaultdict
-
     images_by = {
+        "records": revelio.global_index["records"],
         "size": revelio.global_index["size"],
         "type": revelio.global_index["type"],
         "name": revelio.global_index["name"],
-        "path": revelio.global_index["path"],
+        "name_to_id": revelio.global_index["name_to_id"],
     }
 
     new_paths_to_sync = []
@@ -67,6 +67,7 @@ def process_images(start_path, max_workers=4):
         try:
             size_mb = round(path.stat().st_size / 1024 / 1024, 2)
             return {
+                "id": hashlib.sha256(str(path).encode()).hexdigest(),
                 "path": str(path),
                 "name": path.name,
                 "size_mb": size_mb,
@@ -78,13 +79,15 @@ def process_images(start_path, max_workers=4):
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_path = {executor.submit(get_image_info, path): path for path in indexed_images}
+        existing_files = images_by['records'].keys()
         for future in as_completed(future_to_path):
             data = future.result()
-            if data and data["name"] not in images_by['name']:
-                images_by['size'][data["size_category"]].append(data["name"])
-                images_by['type'].setdefault(data['file_type'], []).append(data["name"])
+            if data and data["id"] not in existing_files:
+                images_by['size'][data["size_category"]].append(data["id"])
+                images_by['type'].setdefault(data['file_type'], []).append(data["id"])
                 images_by['name'].append(data["name"])
-                images_by['path'].append(data)
+                images_by['records'][data["id"]] = data
+                images_by['name_to_id'][data["name"]] = data["id"]
                 new_paths_to_sync.append(data)
                 successful_count += 1  
             else:
@@ -92,7 +95,7 @@ def process_images(start_path, max_workers=4):
     
     if successful_count > 0:
         try:
-            sync_dictionary_with_db(new_paths_to_sync, ['path', 'name',  'size_mb', 'size_category', 'file_type'], 'files')
+            sync_dictionary_with_db(new_paths_to_sync, ['id', 'path', 'name',  'size_mb', 'size_category', 'file_type'], 'files')
             revelio.global_index.update(images_by)
         except Exception as e:
             console.print(general_text_format(f"Error syncing with DB", "error"))

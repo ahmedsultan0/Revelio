@@ -2,6 +2,8 @@ import os
 from magic.config import BL, LB
 from magic.constants import default_line_start
 from rich.console import Console
+from rich.text import Text
+from urllib.parse import quote
 
 console = Console()
 
@@ -12,6 +14,17 @@ general_text_format = lambda message, type=None: (
     f"{default_line_start}[{LB}]{message}" if type == "loading" else 
     f"\n[{BL}][ + ] [{LB}]{message}"
 )
+
+def file_info_format(info):
+    text = Text()
+
+    text.append(f"{info['id'][:8]:<10}", style="white")
+    text.append(f"{info['name'][:40]:<40}", style=LB)
+    text.append(f"{info['size_mb']:>6.2f}MBs ", style="green")
+    path_url = "file://" + quote(info['path'])
+    text.append("(open)", style=f"link {path_url} {BL}")
+    return text
+
 
 def clear():
     # for windows
