@@ -1,7 +1,6 @@
 import re
-from magic.config import BL, LB
-from magic.console_utils import console, general_text_format, file_info_format
-from magic.menu import option_text
+from magic.utils.console_utils import console, general_text_format, file_info_format
+from magic.workflow.menu import option_text
 from revelio import global_index
 from .options import search_options
 

@@ -1,7 +1,7 @@
 import sqlite3
 import os 
 from revelio import global_index
-from magic.console_utils import console, general_text_format
+from magic.utils.console_utils import console, general_text_format
 
 DB_FILE = "revelio.db"
 

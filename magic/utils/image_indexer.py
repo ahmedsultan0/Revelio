@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS
 from pathlib import Path
-from magic.console_utils import console, general_text_format
+from magic.utils.console_utils import console, general_text_format
 from magic.inventory.db_connection import sync_dictionary_with_db
 import revelio
 import hashlib

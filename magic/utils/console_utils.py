@@ -1,11 +1,12 @@
 import os
 from magic.config import BL, LB
-from magic.constants import default_line_start
 from rich.console import Console
 from rich.text import Text
 from urllib.parse import quote
 
 console = Console()
+
+default_line_start = f"[{BL}][ ! ] "
 
 general_text_format = lambda message, type=None: (
     f"\n{default_line_start}[{LB}]{message}" if type == "info" else 
