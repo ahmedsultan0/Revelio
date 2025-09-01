@@ -37,8 +37,8 @@ def search_input(prompt, error_msg, key, transform=lambda x: x, filter_fn=None):
 
 def search_size():
     search_input(
-        prompt="Select a size (S/M/L):",
-        error_msg="Invalid option. Please enter S, M, or L.",
+        prompt="Select a size (S/M/L/XL):",
+        error_msg="Invalid option. Please enter S, M, L or XL.",
         key="size",
         transform=lambda x: x.upper()
     )

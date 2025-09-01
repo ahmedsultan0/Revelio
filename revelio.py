@@ -9,7 +9,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 global_index = {
     "records": {},
-    "size": {"S": [], "M": [], "L": []},
+    "size": {"S": [], "M": [], "L": [], "XL": []},
     "type": {},
     "name": [],
     "name_to_id": {},

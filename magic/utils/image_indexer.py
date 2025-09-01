@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS
+from magic.config import EXCLUDED_DIRS, EXCLUDED_SUB_DIRS, IMAGE_EXTENSIONS, SIZE_CATEGORIES_SPLIT
 from pathlib import Path
 from magic.utils.console_utils import console, general_text_format
 from magic.inventory.db_connection import sync_dictionary_with_db
@@ -37,12 +37,14 @@ def index_images(start_paths, max_paths=1000000):
 
 def size_category(size_mb):
     """Classify size in KB into Small / Medium / Large"""
-    if size_mb < 0.5:
+    if size_mb < SIZE_CATEGORIES_SPLIT["S"]:
         return "S"
-    elif size_mb < 2:
+    elif size_mb < SIZE_CATEGORIES_SPLIT["M"]:
         return "M"
-    else:
+    elif size_mb < SIZE_CATEGORIES_SPLIT["L"]:
         return "L"
+    else:
+        return "XL"
 
 def process_images(start_path, max_workers=4):
     """
