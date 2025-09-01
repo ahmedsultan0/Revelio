@@ -4,7 +4,7 @@ from magic.console_utils import console, general_text_format
 options = [
     {
         'num': 1,
-        'text': 'Index Images',
+        'text': 'Scan system images',
         'func': 'index'
     },
     {
