@@ -1,7 +1,7 @@
 import sqlite3
 import os 
 from revelio import global_index
-from magic.console_utils import console, general_text_format
+from magic.utils.console_utils import console, general_text_format
 
 DB_FILE = "revelio.db"
 
@@ -13,7 +13,7 @@ cursor = connection.cursor()
 if not db_exists:
     cursor.execute('''
         CREATE TABLE files (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id TEXY(40) PRIMARY KEY,
             name TEXT NOT NULL,
             path TEXT NOT NULL UNIQUE,
             size_mb NUMBERIC,
@@ -52,23 +52,25 @@ def load_all_from_table():
     Loads categorized records from a the files database table.
     """
     try:
-        cursor.execute(f"SELECT path, name, size_mb, size_category, file_type FROM files")
+        cursor.execute(f"SELECT id, path, name, size_mb, size_category, file_type FROM files")
         query_result = cursor.fetchall() 
 
         for row in query_result:
 
             formatted_row = {
-                "path": row[0],
-                "name": row[1],
-                "size_mb": row[2],
-                "size_category": row[3],
-                "file_type": row[4]
+                "id": row[0],
+                "path": row[1],
+                "name": row[2],
+                "size_mb": row[3],
+                "size_category": row[4],
+                "file_type": row[5]
             }
 
-            global_index["size"][row[3]].append(row[1])
-            global_index["type"].setdefault(row[3], []).append(row[1])    
-            global_index["name"].append(row[1])
-            global_index["path"].append(formatted_row)
+            global_index["records"][row[0]] = formatted_row
+            global_index["size"][row[4]].append(row[0])
+            global_index["type"].setdefault(row[5], []).append(row[0])    
+            global_index["name"].append(row[2])
+            global_index["name_to_id"][row[2]] = row[0]
             
     except Exception as e:
         console.print(general_text_format(f"Error loading files archive from DB", "error"))

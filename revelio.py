@@ -1,18 +1,18 @@
 from time import sleep
-from magic.config import BL, LB
-from magic.console_utils import clear, welcome
-from magic.menu import execute_option, option_text
-from magic.console_utils import console, general_text_format
+from magic.utils.console_utils import clear, welcome
+from magic.workflow.menu import execute_option, option_text
+from magic.utils.console_utils import console, general_text_format
 from magic.inventory import db_connection
 import signal
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 global_index = {
-    "size": {"S": [], "M": [], "L": []},
+    "records": {},
+    "size": {"S": [], "M": [], "L": [], "XL": []},
     "type": {},
     "name": [],
-    "path": []
+    "name_to_id": {},
 }
 
 def main(clear_screen=True):
@@ -20,7 +20,7 @@ def main(clear_screen=True):
         clear()
         welcome()
     else:
-        sleep(1.5)
+        sleep(1.25)
     console.print(option_text())
 
     if(len(global_index) == 0):
