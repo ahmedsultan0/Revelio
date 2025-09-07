@@ -25,3 +25,4 @@ def index():
         console.print(general_text_format(f"Re-indexing {number_of_images_already_processed} old images is complete!", "success"))
     console.print(general_text_format(f"Indexing {number_of_images_processed} new images is complete!", "success"))
     
+    return number_of_images_processed, number_of_images_already_processed
