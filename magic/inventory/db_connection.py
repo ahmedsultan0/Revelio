@@ -19,7 +19,7 @@ FILE_DB_SQL_COMMAND = '''
 
 db_exists = os.path.exists(DB_FILE)
 
-connection = sqlite3.connect("revelio.db")
+connection = sqlite3.connect(DB_FILE)
 cursor = connection.cursor()
 
 if not db_exists:
