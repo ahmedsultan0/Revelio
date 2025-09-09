@@ -1,8 +1,8 @@
 # Revelio
 
-Reveal your lost image files with one step without the headache of Finder, Spotlight, or Explorer
+Reveal your lost image files with one step and filter them locally without the headache of Finder, Spotlight, or Explorer
 
-<img width="753" height="451" alt="Revilio" src="https://github.com/user-attachments/assets/34e98d18-9f07-49bb-b9b3-8d862f673cef" />
+![ScreenRecording2025-09-07at1 53 19PM-ezgif com-speed](https://github.com/user-attachments/assets/b6228480-6eae-4b15-91e1-8b5e7effc998)
 
 ## Installation
 
@@ -28,7 +28,7 @@ python revelio.py
 Options command: 
 
 1) **Indexing** the image files in your local machine for faster and easier reference and search
-2) **Search** easily for image files based on date, size, format, and resolution
+2) **Search** easily for image files based on date, size, format, name and regex expressions
 3) **content-based search** based on AI powered object detection (Coming soon) 
 
 ## Contributing

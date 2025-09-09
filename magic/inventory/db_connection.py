@@ -5,13 +5,7 @@ from magic.utils.console_utils import console, general_text_format
 
 DB_FILE = "revelio.db"
 
-db_exists = os.path.exists(DB_FILE)
-
-connection = sqlite3.connect("revelio.db")
-cursor = connection.cursor()
-
-if not db_exists:
-    cursor.execute('''
+FILE_DB_SQL_COMMAND = '''
         CREATE TABLE files (
             id TEXY(40) PRIMARY KEY,
             name TEXT NOT NULL,
@@ -21,7 +15,15 @@ if not db_exists:
             file_type TEXT,
             recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ''')
+    '''
+
+db_exists = os.path.exists(DB_FILE)
+
+connection = sqlite3.connect(DB_FILE)
+cursor = connection.cursor()
+
+if not db_exists:
+    cursor.execute(FILE_DB_SQL_COMMAND)
     connection.commit()
 
 
